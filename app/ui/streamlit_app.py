@@ -4,6 +4,12 @@ The entire UI: a single-page Streamlit chat interface. Run with:
 """
 
 import asyncio
+import sys
+from pathlib import Path
+
+# Streamlit sets sys.path[0] to this file's own directory, not the project
+# root, so `import app.*` fails unless we add the root ourselves.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 import streamlit as st
 from langchain_core.messages import AIMessage, HumanMessage
@@ -25,12 +31,19 @@ TOOL_LABELS = {
 }
 
 
+_event_loop = None
+
+
 def run_async(coro):
-    loop = asyncio.new_event_loop()
-    try:
-        return loop.run_until_complete(coro)
-    finally:
-        loop.close()
+    # The cached agent's ChatOpenAI client holds an async HTTP client bound
+    # to whichever event loop was running when it was built. A fresh loop
+    # per call (and closing it afterwards) breaks that client on the next
+    # turn with "Event loop is closed" — so one loop lives for the process.
+    global _event_loop
+    if _event_loop is None or _event_loop.is_closed():
+        _event_loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(_event_loop)
+    return _event_loop.run_until_complete(coro)
 
 
 @st.cache_resource(show_spinner="Starting the MCP server and loading tools...")

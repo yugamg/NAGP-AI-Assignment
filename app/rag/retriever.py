@@ -56,6 +56,11 @@ def search_knowledge_base(query: str) -> str:
     itineraries. Always use this for destination questions, never for
     weather or currency. Returns cited chunks, or a sentinel string if
     nothing relevant is found.
+
+    Use a specific, descriptive query (e.g. "three day itinerary with
+    outdoor and indoor activities"), not a single generic word like
+    "itinerary" — this is a semantic search, and vague queries retrieve
+    weaker matches.
     """
     store = _get_store()
     results = store.similarity_search_with_score(query, k=RETRIEVAL_K)

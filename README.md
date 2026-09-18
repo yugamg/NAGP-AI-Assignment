@@ -163,10 +163,16 @@ cp .env.example .env
 python -m app.rag.ingest
 
 # 5. Run the app
-streamlit run app/ui/streamlit_app.py
+streamlit run app/ui/streamlit_app.py --server.fileWatcherType none
 ```
 
 Open http://localhost:8501.
+
+`--server.fileWatcherType none` avoids a real Streamlit dev-mode issue: its
+file watcher tries to introspect every module under `transformers` (pulled in
+by `sentence-transformers`) to know what to hot-reload, which is slow enough
+on that library's size to stall the first request for a long time. It's not
+needed for this app (no source files change while it runs), so it's disabled.
 
 ### Running tests
 ```bash
@@ -176,16 +182,33 @@ pytest tests/ -v
 
 ---
 
-## What's verified vs. what needs your OpenAI key
+## What's Verified
 
-Everything in this repo has been run and checked in this environment
-**except the live OpenAI-backed chat turns**, since that requires an API key
-this environment doesn't have:
+Every capability below was exercised live in a running instance of this app
+(not just unit-tested in isolation):
 
-- ✅ MCP server + client verified end-to-end against the real, live Open-Meteo and Frankfurter APIs (real HTTP calls, real subprocess over the real MCP stdio protocol — see `tests/test_mcp_tools.py` for the mocked-failure-path tests, and the smoke test in git history for the live call).
-- ✅ RAG ingestion verified end-to-end: 5 documents → 388 chunks → embedded → persisted → retrieved with correct citations, and the no-match sentinel confirmed on an out-of-scope query.
-- ✅ The LangChain 1.x `create_agent` message-shape (tool call → `ToolMessage` → final answer) verified against a stub tool-calling model, since `app/agent.py`'s trace-extraction logic depends on that exact shape.
-- ⏳ A full chat turn through `gpt-4o-mini` — needs `OPENAI_API_KEY` in `.env`, then `streamlit run app/ui/streamlit_app.py`.
+- ✅ **RAG retrieval + citations** — "What are the must-visit attractions for a family with young kids?" returned grounded, per-claim-cited answers from `Top Things To Do`, with no MCP calls made (correct tool selection).
+- ✅ **MCP weather tool** — real calls to Open-Meteo's live geocoding + forecast APIs.
+- ✅ **MCP currency tool** — real calls to Frankfurter's live ECB rates (e.g. 200 SGD → 14,999 INR at the day's rate).
+- ✅ **Combined RAG + MCP (the primary required scenario)** — "Create a three-day Singapore itinerary for next week and adjust it according to the weather forecast" correctly called both the weather tool (got a 3-day forecast showing 76-96% rain chance) and the knowledge base, then produced a day-by-day itinerary that swapped in indoor attractions (ArtScience Museum, National Gallery, S.E.A. Aquarium) because of the forecast.
+- ✅ **Multi-turn context** — a follow-up turn ("convert 200 SGD to INR for that trip, and remind me which of those attractions were indoor") correctly recalled the specific attractions named in the previous turn and correctly identified which were indoor, without restating them.
+- ✅ **Missing-knowledge handling** — an out-of-scope query ("best sushi restaurant in Tokyo") returns the `NO_RELEVANT_KNOWLEDGE_FOUND` sentinel rather than a fabricated answer.
+- ✅ **Per-turn source/tool trace** — the "Sources & tools used" expander correctly shows the KB chunk(s) with citations for RAG turns, and the tool name + raw JSON result for MCP turns.
+- ✅ Unit tests (`tests/test_mcp_tools.py`, 7 tests) pass — happy-path and failure-path coverage for both MCP tools with the HTTP layer mocked.
+
+Two real bugs were found and fixed during this live verification (not just
+theoretical — both would have broken the app for any real user):
+1. **Chroma's default distance metric is squared L2, not cosine** — a 0.8
+   "relevance" threshold written assuming cosine distance was silently too
+   strict, causing correct itinerary content to be treated as irrelevant.
+   Fixed by setting `collection_metadata={"hnsw:space": "cosine"}` in
+   `ingest.py` and recalibrating the threshold in `config.py` against actual
+   measured distances for on-topic vs. off-topic queries.
+2. **`RuntimeError: Event loop is closed` on the second chat turn** — the UI
+   was opening and closing a fresh asyncio event loop per turn, but the
+   cached `ChatOpenAI` client's async HTTP client stays bound to whichever
+   loop existed when it was built. Fixed in `streamlit_app.py` by keeping one
+   event loop alive for the process's lifetime instead of closing it each turn.
 
 ---
 

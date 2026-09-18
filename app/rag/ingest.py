@@ -77,6 +77,10 @@ def build_vectorstore() -> None:
         embedding=embeddings,
         collection_name=CHROMA_COLLECTION,
         persist_directory=str(VECTORSTORE_DIR),
+        # Chroma defaults to squared L2, which isn't the right distance for
+        # sentence-transformer embeddings and makes a relevance threshold hard
+        # to reason about. Cosine keeps distances in a stable, comparable range.
+        collection_metadata={"hnsw:space": "cosine"},
     )
 
     print(f"Ingested {len(documents)} source document(s) -> {len(chunks)} chunks.")
