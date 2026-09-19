@@ -1,8 +1,3 @@
-"""
-Loads the persisted Chroma store and exposes it as a single LangChain tool
-the agent calls for any destination-knowledge question.
-"""
-
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 from langchain_core.tools import tool

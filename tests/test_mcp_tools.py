@@ -1,12 +1,4 @@
-"""
-Unit tests for the MCP tool functions, with the HTTP layer mocked.
-We test the underlying functions directly (via `.fn`, the raw Python callable
-FastMCP wraps) rather than spinning up the stdio server — that's covered by
-the manual end-to-end check in the README.
-"""
-
 import httpx
-import pytest
 
 from app.mcp_server.server import convert_currency, get_weather
 

@@ -1,20 +1,3 @@
-"""
-Reproducible fetch of the public knowledge-base sources.
-
-The curated files already checked into `data/knowledge_base/` ARE the
-deliverable (assignment requirement #17: "knowledge-base documents, or clear
-instructions for obtaining them"). They were captured from these same URLs and
-hand-cleaned (stripped of site navigation, cookie banners, and tab-switch
-noise) for better chunk quality than a raw scrape produces.
-
-This script exists so the fetch step is reproducible, not because the app
-depends on it running. It fetches each URL fresh, strips tags with
-BeautifulSoup, and writes plain markdown with the same frontmatter shape to
-`data/knowledge_base_raw/` — it never overwrites the curated files.
-
-Run with: python -m scripts.fetch_sources
-"""
-
 from pathlib import Path
 
 import httpx

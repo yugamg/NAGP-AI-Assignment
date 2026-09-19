@@ -1,5 +1,3 @@
-"""Single place for paths, model names, and tunables. No config framework."""
-
 import os
 from pathlib import Path
 

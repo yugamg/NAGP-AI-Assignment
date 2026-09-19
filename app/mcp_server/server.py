@@ -1,17 +1,3 @@
-"""
-MCP server exposing two live-data tools over stdio: weather and currency
-conversion. Built with the official `mcp` SDK's FastMCP helper.
-
-Both backing APIs are free and require no key:
-  - Open-Meteo (geocoding + forecast)
-  - Frankfurter (ECB reference exchange rates)
-
-Every tool returns a plain dict. On any failure (bad input, network error,
-timeout, empty result) it returns {"error": "..."} instead of raising or
-guessing — the agent is instructed to relay that plainly rather than
-fabricate a number.
-"""
-
 import httpx
 from mcp.server.fastmcp import FastMCP
 

@@ -1,21 +1,3 @@
-"""
-The system prompt is the enforcement point for every rule in the assignment's
-"Prompt Engineering Requirements" section:
-
-  - use retrieved KB content for destination facts, and cite it
-  - use MCP tool output for anything time-sensitive (weather, currency)
-  - never present unsupported information as fact
-  - say plainly when the knowledge base or a tool has nothing to offer
-  - keep destination facts, live tool data, and the model's own suggestions
-    visibly separate in the answer
-  - preserve user preferences (budget, travel dates, party size, interests)
-    across turns, since the agent is replayed the full message history
-
-We keep this as one plain string rather than a template library — there is
-exactly one prompt in this app, and a template engine would be solving a
-problem we don't have.
-"""
-
 SYSTEM_PROMPT = """You are the AI Travel Planning Assistant for Singapore.
 
 You have exactly two sources of information, and you must never blur them:

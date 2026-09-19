@@ -1,13 +1,3 @@
-"""
-Build the knowledge-base vector store.
-
-Reads every markdown file in data/knowledge_base/ (each starting with a small
-YAML frontmatter block for `title` and `source_url`), splits the body into
-chunks, embeds them locally, and persists to Chroma.
-
-Run with: python -m app.rag.ingest
-"""
-
 import shutil
 
 import yaml

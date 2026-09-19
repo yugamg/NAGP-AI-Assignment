@@ -1,15 +1,3 @@
-"""
-Builds the single LangChain agent that ties together the RAG tool and the two
-MCP tools, and runs it against a running message history.
-
-LangChain 1.x's `create_agent` (LangGraph under the hood) replaces the older
-`create_tool_calling_agent` + `AgentExecutor` pair. It compiles a small graph
-that alternates between calling the model and calling tools until the model
-stops requesting tools, and returns the full message list — including every
-`ToolMessage` — which is exactly what we need to show a "sources & tools
-used" trace per turn without any extra bookkeeping.
-"""
-
 from dataclasses import dataclass, field
 
 from langchain.agents import create_agent
