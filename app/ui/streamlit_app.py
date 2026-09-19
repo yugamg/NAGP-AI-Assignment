@@ -16,14 +16,6 @@ from langchain_core.messages import AIMessage, HumanMessage
 
 from app.agent import AgentTurn, build_agent, run_turn
 
-KB_SOURCES = [
-    ("Singapore Travel Guide - Wikivoyage", "https://en.wikivoyage.org/wiki/Singapore"),
-    ("Essential Singapore Travel Information", "https://www.visitsingapore.com/travel-tips/essential-travel-information/"),
-    ("Enjoy Singapore in 7 Days (Sample Itinerary)", "https://www.visitsingapore.com/travel-tips/travelling-to-singapore/itineraries/7-days-in-singapore/"),
-    ("Top Things To Do", "https://www.visitsingapore.com/things-to-do/top-things-to-do/"),
-    ("Local Food & Drinks", "https://www.visitsingapore.com/things-to-do/dining/local-food-and-drinks/"),
-]
-
 TOOL_LABELS = {
     "search_knowledge_base": "Knowledge base (RAG)",
     "get_weather": "Live weather (MCP)",
@@ -71,22 +63,21 @@ def render_tool_trace(turn: AgentTurn) -> None:
 def main() -> None:
     st.set_page_config(page_title="Singapore Travel Assistant", page_icon="🧭")
 
-    with st.sidebar:
-        st.header("Singapore Travel Planning Assistant")
-        st.write(
-            "Ask about attractions, transport, food, and itineraries "
-            "(from a curated knowledge base), or live weather and currency "
-            "conversion (via MCP tools). Combine both for a weather-aware "
-            "itinerary or a budget-aware trip plan."
-        )
-        st.subheader("Knowledge base sources")
-        for title, url in KB_SOURCES:
-            st.markdown(f"- [{title}]({url})")
-        if st.button("Clear conversation"):
+    title_col, clear_col = st.columns([5, 1])
+    with title_col:
+        st.title("🧭 Singapore Travel Planning Assistant")
+    with clear_col:
+        st.write("")
+        if st.button("Clear chat"):
             st.session_state.messages = []
             st.rerun()
 
-    st.title("🧭 Singapore Travel Planning Assistant")
+    st.caption(
+        "Ask about attractions, transport, food, and itineraries, or live "
+        "weather and currency conversion. Combine both for a weather-aware "
+        "itinerary or a budget-aware trip plan. Each answer's sources and "
+        "tool calls are shown below it."
+    )
 
     if "messages" not in st.session_state:
         st.session_state.messages = []  # list of (role, content, AgentTurn|None)

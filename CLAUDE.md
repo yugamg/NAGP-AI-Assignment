@@ -210,8 +210,9 @@ One page. A chat interface (`st.chat_message`, `st.chat_input`). Nothing else:
   used"** section listing:
   - KB chunks cited (title + link)
   - MCP tool calls made (tool name, inputs, and a one-line result summary)
-- A sidebar with: a short static description of the app, the 4 KB source links,
-  and a "clear conversation" button. That's the entire sidebar.
+- No sidebar. A title, a one-line caption, the chat, and a "Clear chat" button
+  next to the title. KB source links live in the per-turn trace (where a
+  citation is actually relevant), not in a permanent nav panel nobody reads.
 
 No dashboards, no tabs, no settings panel, no file upload, no auth. The brief
 says explicitly: focus is the AI workflow, not interface sophistication.
