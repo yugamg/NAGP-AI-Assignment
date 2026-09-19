@@ -57,12 +57,7 @@ def main() -> None:
 
     title_col, clear_col = st.columns([5, 1])
     with title_col:
-        st.title("🧭 Singapore Travel Planning Assistant")
-    with clear_col:
-        st.write("")
-        if st.button("Clear chat"):
-            st.session_state.messages = []
-            st.rerun()
+        st.title("Travel Planning Assistant (Singapore)")
 
     st.caption(
         "Ask about attractions, transport, food, and itineraries, or live "

@@ -66,9 +66,9 @@ crash. Treat "who said this?" as a correctness property, not a nice-to-have.
 
 ## 8. Small, real tests — not coverage theater
 
-`tests/test_mcp_tools.py` mocks the HTTP layer and checks: happy path returns
-shaped data, failure path returns a structured error, not an exception leaking
-to the caller. That's the bar. No test suite for Streamlit rendering, no
+If tests exist, they should mock the HTTP layer and check real behavior:
+happy path returns shaped data, failure path returns a structured error, not
+an exception leaking to the caller. No test suite for Streamlit rendering, no
 snapshot tests of prompt strings.
 
 ## 9. Dependencies are a liability, not a flex

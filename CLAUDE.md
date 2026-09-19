@@ -25,9 +25,9 @@ model's own suggestion."
 
 ## Reference
 
-The full brief is at `AI_Travel_Planning_Assistant_Assignment.pdf` in this folder.
-Read it before changing scope. Destination is **Singapore** (per the brief's
-recommendation — public resources are good and it keeps the KB scope bounded).
+This builds the "AI Travel Planning Assistant" developer assignment.
+Destination is **Singapore** (per the brief's recommendation — public
+resources are good and it keeps the KB scope bounded).
 
 ---
 
@@ -60,11 +60,10 @@ NAGP AI Assignment/
 ├── CLAUDE.md
 ├── RULES.md
 ├── README.md
-├── SAMPLE_QA.md
+├── questions.md
 ├── requirements.txt
 ├── .env.example
 ├── .gitignore
-├── AI_Travel_Planning_Assistant_Assignment.pdf
 ├── app/
 │   ├── config.py                  ← env vars, paths, model names — one place
 │   ├── prompts.py                 ← system prompt + prompt-strategy notes
@@ -81,10 +80,8 @@ NAGP AI Assignment/
 ├── data/
 │   ├── knowledge_base/             ← source markdown files (title + url in frontmatter)
 │   └── vectorstore/                ← Chroma persistence (gitignored, rebuildable)
-├── scripts/
-│   └── fetch_sources.py            ← reproducible fetch of the 4 public sources
-└── tests/
-    └── test_mcp_tools.py           ← unit tests for the two MCP tools (mocked HTTP)
+└── scripts/
+    └── fetch_sources.py            ← reproducible fetch of the 5 public sources
 ```
 
 That's it. No extra files beyond this list.
@@ -265,7 +262,7 @@ streamlit run app/ui/streamlit_app.py
 - [ ] Multi-turn context retained (a follow-up question referencing a prior answer works)
 - [ ] Tool/API failures produce a clear "couldn't retrieve X" message, never fabricated data
 - [ ] Streamlit chat UI shows sources and tool calls per turn, distinct from the prose answer
-- [ ] README, SAMPLE_QA.md, requirements.txt, .env.example all present and accurate
+- [ ] README, questions.md, requirements.txt, .env.example all present and accurate
 - [ ] No console errors on a fresh `pip install` + run
 
 ---

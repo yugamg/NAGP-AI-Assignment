@@ -12,4 +12,4 @@ Questions
 
 6. What's the best sushi restaurant in Tokyo? - Knowledge base has nothing on Tokyo, so it says that plainly instead of guessing.
 
-7. What is the weather like on Mars? - Weather tool can't resolve the location, so it reports the failure instead of making up a forecast.
+7. Can you book me flight tickets for singapore? - it cannot book flight or hotels ticket 

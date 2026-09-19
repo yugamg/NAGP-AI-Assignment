@@ -19,11 +19,6 @@ CHROMA_COLLECTION = "singapore_travel_kb"
 CHUNK_SIZE = 800
 CHUNK_OVERLAP = 120
 RETRIEVAL_K = 4
-# Cosine distance (0 = identical, 2 = opposite; see ingest.py's hnsw:space
-# setting). Calibrated empirically: relevant travel-topic queries against this
-# corpus land at ~0.2-0.55, off-topic queries (e.g. "sushi in Tokyo") land at
-# ~0.55+. Anything above this is treated as "not actually relevant" rather
-# than forced into the answer.
 MAX_RELEVANT_DISTANCE = 0.55
 
 NO_RELEVANT_KNOWLEDGE = "NO_RELEVANT_KNOWLEDGE_FOUND"
