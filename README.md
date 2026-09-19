@@ -116,33 +116,11 @@ python -m app.rag.ingest
 
 # 5. run the app
 streamlit run app/ui/streamlit_app.py --server.fileWatcherType none
+
+Open http://localhost:8501
 ```
 
-Open http://localhost:8501.
 
-`--server.fileWatcherType none` is needed because Streamlit's dev-mode file
-watcher tries to introspect every module under `transformers` (pulled in by
-`sentence-transformers`) to know what to hot-reload, which is slow enough on
-that library's size to stall the first request for a long time. Nothing in
-this app changes while it runs, so the watcher isn't needed.
-
-## What's Verified
-
-Every item below was exercised live in a running instance of the app, not
-just unit-tested in isolation:
-
-- RAG retrieval and citations: a plain destination question returned a grounded, cited answer with no MCP calls made.
-- MCP weather tool: real calls to Open-Meteo's live geocoding and forecast APIs.
-- MCP currency tool: real calls to Frankfurter's live ECB rates.
-- Combined RAG + MCP: the required "3-day itinerary adjusted for the weather forecast" scenario called both the weather tool and the knowledge base, and produced a day-by-day plan that swapped in indoor attractions where rain was likely.
-- Multi-turn context: a follow-up turn correctly recalled attractions named in the previous turn and correctly identified which were indoor, without them being restated.
-- Missing-knowledge handling: an out-of-scope query (e.g. a Tokyo restaurant question) returns the "not covered" response instead of a fabricated answer.
-- Per-turn source/tool trace: the "Sources & tools used" section shows KB citations for RAG turns and the tool name plus raw result for MCP turns.
-
-Two real bugs were found and fixed during this live verification:
-
-1. Chroma's default distance metric is squared L2, not cosine. A threshold written assuming cosine distance was silently too strict and rejected valid knowledge-base matches. Fixed by setting cosine distance explicitly in `ingest.py` and recalibrating the threshold in `config.py`.
-2. The UI opened and closed a fresh asyncio event loop on every turn, but the cached OpenAI client's async HTTP client stays bound to whichever loop existed when it was built, causing `RuntimeError: Event loop is closed` on the second turn. Fixed by keeping one event loop alive for the process's lifetime.
 
 ## Sample Questions
 
