@@ -4,9 +4,11 @@ from mcp.server.fastmcp import FastMCP
 mcp = FastMCP("travel-live-data")
 
 HTTP_TIMEOUT = 10.0
-GEOCODE_URL = "https://geocoding-api.open-meteo.com/v1/search"
 FORECAST_URL = "https://api.open-meteo.com/v1/forecast"
 EXCHANGE_URL = "https://api.frankfurter.dev/v1/latest"
+
+SINGAPORE_LAT = 1.29
+SINGAPORE_LON = 103.85
 
 WEATHER_CODES = {
     0: "clear sky", 1: "mainly clear", 2: "partly cloudy", 3: "overcast",
@@ -20,34 +22,23 @@ WEATHER_CODES = {
 
 
 @mcp.tool()
-def get_weather(location: str, forecast_days: int = 3) -> dict:
-    """Get current conditions and a daily forecast for a location.
+def get_weather(forecast_days: int = 3) -> dict:
+    """Get current conditions and a daily forecast for Singapore.
+
+    This assistant only plans Singapore trips, so this always checks
+    Singapore's weather regardless of what the user's message says.
 
     Args:
-        location: City or place name, e.g. "Singapore".
         forecast_days: Number of forecast days to return (1-7).
     """
     forecast_days = max(1, min(forecast_days, 7))
 
     try:
-        geo_resp = httpx.get(
-            GEOCODE_URL,
-            params={"name": location, "count": 1},
-            timeout=HTTP_TIMEOUT,
-        )
-        geo_resp.raise_for_status()
-        geo_results = geo_resp.json().get("results")
-        if not geo_results:
-            return {"error": f"Could not find a location matching '{location}'."}
-
-        place = geo_results[0]
-        lat, lon = place["latitude"], place["longitude"]
-
         forecast_resp = httpx.get(
             FORECAST_URL,
             params={
-                "latitude": lat,
-                "longitude": lon,
+                "latitude": SINGAPORE_LAT,
+                "longitude": SINGAPORE_LON,
                 "current": "temperature_2m,weather_code,relative_humidity_2m",
                 "daily": "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max",
                 "forecast_days": forecast_days,
@@ -64,7 +55,7 @@ def get_weather(location: str, forecast_days: int = 3) -> dict:
     daily = data.get("daily", {})
 
     return {
-        "location": f"{place.get('name')}, {place.get('country', '')}".strip(", "),
+        "location": "Singapore",
         "current": {
             "temperature_c": current.get("temperature_2m"),
             "humidity_pct": current.get("relative_humidity_2m"),

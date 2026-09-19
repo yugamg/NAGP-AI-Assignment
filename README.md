@@ -76,7 +76,7 @@ SDK's `FastMCP`) exposes two tools over stdio. It is not imported directly —
 it's called over the actual MCP protocol via `langchain-mcp-adapters`
 (`app/mcp_client/client.py` spawns the server as a subprocess).
 
-- `get_weather(location, forecast_days)` — Open-Meteo (geocoding + forecast), free, no key
+- `get_weather(forecast_days)` — Open-Meteo, free, no key. Always checks Singapore (the only destination this assistant covers) — it takes no location, so it can't be pointed at the wrong city.
 - `convert_currency(amount, from_currency, to_currency)` — Frankfurter (ECB reference rates), free, no key
 
 Both tools return `{"error": "..."}` on failure (bad location, unknown

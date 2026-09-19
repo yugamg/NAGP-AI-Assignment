@@ -147,15 +147,19 @@ already-ingested Chroma store.
 A real MCP server over stdio, built with the official `mcp` Python SDK
 (`mcp.server.fastmcp.FastMCP`). Two tools:
 
-### `get_weather(location: str, forecast_days: int = 3)`
-- Geocode `location` via Open-Meteo's free geocoding endpoint, then call
-  Open-Meteo's forecast endpoint for current conditions + a daily forecast.
-- No API key required (Open-Meteo is free/open for non-commercial use).
-- On any HTTP error, timeout, or empty geocoding result: return a structured
-  error payload (`{"error": "..."}`), never a fabricated forecast.
+### `get_weather(forecast_days: int = 3)`
+- Always checks Singapore — fixed lat/lon, no location argument. This
+  assistant only ever plans Singapore trips, so there is no legitimate case
+  for it to check another city, and taking a free-text location invited the
+  model to silently substitute "Singapore" whenever the user's wording didn't
+  parse as a real place instead of asking for clarification.
+- Calls Open-Meteo's forecast endpoint for current conditions + a daily
+  forecast. No API key required.
+- On any HTTP error or timeout: return a structured error payload
+  (`{"error": "..."}`), never a fabricated forecast.
 
 ### `convert_currency(amount: float, from_currency: str, to_currency: str)`
-- Call the Frankfurter API (`https://api.frankfurter.app`) — free, no key,
+- Call the Frankfurter API (`https://api.frankfurter.dev`) — free, no key,
   ECB reference rates.
 - Validate currency codes are 3-letter ISO 4217 before calling out.
 - On failure: structured error payload, same discipline as above.
