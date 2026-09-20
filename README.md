@@ -1,5 +1,7 @@
 # AI Travel Planning Assistant — Singapore
 
+GitHub: https://github.com/yugamg/NAGP-AI-Assignment
+
 A travel assistant for Singapore that combines a document-based knowledge
 base (RAG) with live data from a self-built MCP server (weather + currency
 conversion), orchestrated with LangChain and served through a Streamlit chat
